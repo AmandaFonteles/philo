@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:53:16 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:43:08 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/01 16:47:32 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	main(int ac, char **av)
 {
 	t_table	table;
 
-	if (ft_parse(ac, av, &table))
+	if (parsing(ac, av, &table))
 		return (msg_err(ARG_ERR)); //change the errors
 	table.start_time = get_time() + (table.nb_philo * 20);
 	if (launch_simulation(&table))

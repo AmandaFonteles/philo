@@ -6,13 +6,13 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:59:57 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:34:42 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/01 17:57:47 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
 
-static long	ft_atoi_boost(const char *str, int *error)
+static long	ft_atoi_plus(const char *str, int *error)
 {
 	int		i;
 	long	result;
@@ -28,7 +28,7 @@ static long	ft_atoi_boost(const char *str, int *error)
 		*error = 1;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		result = result * 10 + (str[i] - 48);
+		result = result * 10 + (str[i] - '0');
 		i++;
 		if ((result > INT_MAX))
 			*error = 1;
@@ -36,7 +36,7 @@ static long	ft_atoi_boost(const char *str, int *error)
 	return (result);
 }
 
-static int	ft_init_mutex(t_table *table)
+static int	init_mutex(t_table *table)
 {
 	size_t i;
 
@@ -55,7 +55,10 @@ static int	ft_init_mutex(t_table *table)
 	}
 	return (0);
 }
-
+//This function assigns the left and right forks to each philosopher.
+//The left fork to odd philo and right fork to even philo.
+//This is to avoid deadlocks and ensure that each philosopher
+//has access to both forks.
 static void	assign_forks(t_philo *philo, size_t i)
 {
 	if (philo->idx % 2)
@@ -72,21 +75,16 @@ static void	assign_forks(t_philo *philo, size_t i)
 	}
 }
 
-/**
- * malloc the table of philos and the table of mutex forks
- * assign the mutex (fork) of the table left and right to each philosopher
- * init the log mutex pointeur to each philo
- * assign all other relevant information
- */
-static int	ft_init_philo(t_table *table)
+//Philos starts with 1 and forks starts with 0
+static int	init_philos(t_table *table)
 {
 	size_t	i;
 
+	i = 0;
 	table->philos = malloc(table->nb_philo * sizeof(t_philo));
 	table->forks = malloc(table->nb_philo * sizeof(pthread_mutex_t));
 	if (!table->philos || !table->forks)
 		return (1);
-	i = 0;
 	memset(table->philos, 0, table->nb_philo * sizeof(t_philo));
 	while (i < table->nb_philo)
 	{
@@ -95,27 +93,29 @@ static int	ft_init_philo(t_table *table)
 		table->philos[i].idx = i + 1;
 		table->philos[i].table = table;
 		table->philos[i].count_meal = 0;
+		table->philos[i].last_meal = table->start_time;
 		assign_forks(&table->philos[i], i);
 		i++;
 	}
 	return (0);
 }
-
-int	ft_parse(int argc, char **argv, t_table *table)
+// This function parses the arguments, initializes the table and philosophers,
+// and returns 0 if successful, or 1 if there was an error.
+int	parsing(int argc, char **argv, t_table *table)
 {
 	int	error;
 
 	error = 0;
 	if (!(argc == 5 || argc == 6))
 		return (1);
-	table->nb_philo = ft_atoi_boost(argv[1], &error);
-	table->time_to_die = ft_atoi_boost(argv[2], &error);
-	table->time_to_eat = ft_atoi_boost(argv[3], &error);
-	table->time_to_sleep = ft_atoi_boost(argv[4], &error);
+	table->nb_philo = ft_atoi_plus(argv[1], &error);
+	table->time_to_die = ft_atoi_plus(argv[2], &error);
+	table->time_to_eat = ft_atoi_plus(argv[3], &error);
+	table->time_to_sleep = ft_atoi_plus(argv[4], &error);
 	table->dead_flag = 0;
 	if (argc == 6)
 	{
-		table->must_eat = ft_atoi_boost(argv[5], &error);
+		table->must_eat = ft_atoi_plus(argv[5], &error);
 		if (!table->must_eat)
 			return (1);
 	}
@@ -123,8 +123,10 @@ int	ft_parse(int argc, char **argv, t_table *table)
 		table->must_eat = 0;
 	if (error)
 		return (1);
-	error = ft_init_philo(table);
-	if (ft_init_mutex(table))
+	error = init_philos(table);
+	if (error)
+		return (free_philo(table), 1);
+	if (init_mutex(table))
 		return (free_philo(table), 1);
 	return (error);
 }

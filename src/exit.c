@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:12:33 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:32:28 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/01 17:19:13 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ void	ft_free(t_table *table)
 	pthread_mutex_destroy(&table->m_dead);
 	pthread_mutex_destroy(&table->print);
 }
-
+//call free when the simulation is over
+//to free all the alloc mem and destroy all the mutex
 int	msg_err(int key_error)
 {
 	if (key_error == ARG_ERR)

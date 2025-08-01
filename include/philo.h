@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:11:01 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:16:29 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/01 16:47:56 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ enum
 /* ROUTINE  */
 
 // => parse.c
-int						ft_parse(int argc, char **argv, t_table *table);
+int						parsing(int argc, char **argv, t_table *table);
 
 // => exit.c
 void					ft_free(t_table *table);

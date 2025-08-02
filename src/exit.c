@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:12:33 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 17:19:13 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/02 15:30:16 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,31 @@
 void	free_philo(t_table *table)
 {
 	size_t	i;
-
+	
 	i = 0;
-	free(table->philos);
-	while (i < table->nb_philo)
+	if (table->forks)
 	{
-		pthread_mutex_destroy(&table->forks[i]);
-		i++;
+		while (i < table->nb_philo)
+		{
+			pthread_mutex_destroy(&table->forks[i]);
+			i++;
+		}
+		free(table->forks);
 	}
-	free(table->forks);
+
+	if (table->philos)
+	{
+		i = 0;
+		while (i < table->nb_philo)
+		{
+			pthread_mutex_destroy(&table->philos[i].m_last_meal);
+			pthread_mutex_destroy(&table->philos[i].m_count_meal);
+			i++;
+		}
+		free(table->philos);
+	}
 }
+
 
 void	ft_free(t_table *table)
 {
@@ -35,7 +50,7 @@ void	ft_free(t_table *table)
 	while (i < table->nb_philo)
 	{
 		pthread_mutex_destroy(&table->forks[i]);
-		pthread_mutex_destroy(&table->philos[i].m_count_meal);
+		pthread_mutex_destroy(&table->philos[i].m_last_meal);
 		pthread_mutex_destroy(&table->philos[i].m_count_meal);
 		i++;
 	}
@@ -57,3 +72,20 @@ int	msg_err(int key_error)
 	return (EXIT_FAILURE);
 }
 
+int	safe_thread(pthread_t *thread, void *(*func)(void *), void *arg)
+{
+	if (pthread_create(thread, NULL, func, arg))
+		return (1);
+	return (0);
+}
+
+int	join_philos(t_table *table, size_t count)
+{
+	size_t i = 0;
+	while (i < count)
+	{
+		pthread_join(table->philos[i].philo_thread, NULL);
+		i++;
+	}
+	return (0);
+}

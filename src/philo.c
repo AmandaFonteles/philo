@@ -6,35 +6,34 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:53:16 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:47:32 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/02 15:29:08 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	launch_simulation(t_table *table)
+int	launch_simulation(t_table *table)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < table->nb_philo)
 	{
-		if (pthread_create(&table->philos[i].philo_thread, NULL, &routine,
-				&table->philos[i]))
+		if (safe_thread(&table->philos[i].philo_thread, routine, &table->philos[i]))
+		{
+			join_philos(table, i);
 			return (1);
+		}
 		i++;
 	}
-	if (pthread_create(&table->monitor, NULL, &handle_life, table))
-		return (1);
-	i = 0;
-	while (i < table->nb_philo)
+	if (safe_thread(&table->monitor, handle_life, table))
 	{
-		if (pthread_join(table->philos[i].philo_thread, NULL))
-			return (1);
-		i++;
-	}
-	if (pthread_join(table->monitor, NULL))
+		join_philos(table, table->nb_philo);
 		return (1);
+	}
+	join_philos(table, table->nb_philo);
+	pthread_join(table->monitor, NULL);
+
 	return (0);
 }
 

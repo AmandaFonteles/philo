@@ -6,13 +6,13 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:59:57 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 17:57:47 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/02 16:43:27 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <philo.h>
-
-static long	ft_atoi_plus(const char *str, int *error)
+//mudar atoi p atoll
+static long	atoi_plus(const char *str, int *error)
 {
 	int		i;
 	long	result;
@@ -48,9 +48,15 @@ static int	init_mutex(t_table *table)
 	while (i < table->nb_philo)
 	{
 		if (pthread_mutex_init(&table->philos[i].m_last_meal, NULL))
+		{
+			table->nb_philo = i;
 			return (1);
+		}
 		if (pthread_mutex_init(&table->philos[i].m_count_meal, NULL))
+		{
+			table->nb_philo = i;
 			return (1);
+		}
 		i++;
 	}
 	return (0);
@@ -76,6 +82,9 @@ static void	assign_forks(t_philo *philo, size_t i)
 }
 
 //Philos starts with 1 and forks starts with 0
+//If a mutex fails to initialize, we free save i in nb_philo
+//So we have i philos that are initialized
+// and can call free_philo to free them
 static int	init_philos(t_table *table)
 {
 	size_t	i;
@@ -89,7 +98,10 @@ static int	init_philos(t_table *table)
 	while (i < table->nb_philo)
 	{
 		if (pthread_mutex_init(&table->forks[i], NULL))
+		{
+			table->nb_philo = i;
 			return (1);
+		}
 		table->philos[i].idx = i + 1;
 		table->philos[i].table = table;
 		table->philos[i].count_meal = 0;
@@ -108,23 +120,19 @@ int	parsing(int argc, char **argv, t_table *table)
 	error = 0;
 	if (!(argc == 5 || argc == 6))
 		return (1);
-	table->nb_philo = ft_atoi_plus(argv[1], &error);
-	table->time_to_die = ft_atoi_plus(argv[2], &error);
-	table->time_to_eat = ft_atoi_plus(argv[3], &error);
-	table->time_to_sleep = ft_atoi_plus(argv[4], &error);
+	memset(table, 0, sizeof(t_table));
+	table->nb_philo = atoi_plus(argv[1], &error);
+	table->time_to_die = atoi_plus(argv[2], &error);
+	table->time_to_eat = atoi_plus(argv[3], &error);
+	table->time_to_sleep = atoi_plus(argv[4], &error);
 	table->dead_flag = 0;
 	if (argc == 6)
-	{
-		table->must_eat = ft_atoi_plus(argv[5], &error);
-		if (!table->must_eat)
-			return (1);
-	}
+		table->must_eat = atoi_plus(argv[5], &error);
 	else
 		table->must_eat = 0;
 	if (error)
 		return (1);
-	error = init_philos(table);
-	if (error)
+	if (init_philos(table))
 		return (free_philo(table), 1);
 	if (init_mutex(table))
 		return (free_philo(table), 1);

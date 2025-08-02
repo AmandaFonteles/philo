@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/01 13:11:01 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 16:47:56 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/02 15:32:10 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,9 @@ int						parsing(int argc, char **argv, t_table *table);
 void					ft_free(t_table *table);
 void					free_philo(t_table *table);
 int						msg_err(int key_error);
+int	safe_thread(pthread_t *thread, void *(*func)(void *), void *arg);
+int	join_philos(t_table *table, size_t count);
+
 
 // => time
 long long				get_time(void);

@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_time.c                                       :+:      :+:    :+:   */
+/*   actions.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/01 13:13:01 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/01 14:00:35 by afontele         ###   ########.fr       */
+/*   Created: 2025/08/04 15:20:00 by afontele          #+#    #+#             */
+/*   Updated: 2025/08/04 16:21:06 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo.h>
+#include "../philo.h"
 
-void	ft_wait(long long time_to_wait, t_table *table)
+int	sleep_philo(t_philo *philo)
 {
-	long long	time;
-
-	time = get_time() + time_to_wait;
-	while (!end_simu(table) && get_time() < time)
-		usleep(500);
+	if (end_sim(philo->table))
+		return (1);
+	print_status(philo, "is sleeping");
+	ft_usleep(philo->table->time_to_sleep, philo->table);
+	return (0);
 }
 
-/**
- * for getting current time in ms
- */
-long long	get_time(void)
+int	think_philo(t_philo *philo)
 {
-	struct timeval	current_time;
-
-	gettimeofday(&current_time, NULL);
-	return ((long long)(current_time.tv_sec * 1000LL) + (current_time.tv_usec
-			/ 1000));
+	if (end_sim(philo->table))
+		return (1);
+	print_status(philo, "is thinking");
+	ft_usleep(1, philo->table);
+	return (0);
 }
-

@@ -5,48 +5,46 @@
 #                                                     +:+ +:+         +:+      #
 #    By: afontele <afontele@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/08/01 13:11:05 by afontele          #+#    #+#              #
-#    Updated: 2025/08/01 14:02:37 by afontele         ###   ########.fr        #
+#    Created: 2025/08/03 20:13:46 by afontele          #+#    #+#              #
+#    Updated: 2025/08/04 18:41:30 by afontele         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME := philo
+NAME = philo
 
-CC := cc 
-CFLAGS := -Wall -Werror -Wextra -g -pthread
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g -pthread
+INCLUDE = -I.
+RM = rm -rf
+OBJDIR = obj
 
-INCLUDE := -I include
-SRCS := check_life.c exit.c parse.c philo_time.c philo_utils.c philo.c routine.c
-SRCS := $(addprefix src/, $(SRCS))
-OBJS :=  $(SRCS:.c=.o)
+SRCS = src/main.c \
+	   src/init.c \
+	   src/life_cycle.c \
+	   src/parse.c \
+	   src/monitor.c \
+	   src/routine.c \
+	   src/actions.c \
+	   src/threads.c \
+	   src/utils.c
 
-RED=\033[0;31m
-ROSE=\033[0;95m
-GREEN=\033[0;32m
-NC=\033[0m
-YELLOW=\033[0;33m
-CYAN=\033[1;34m 
+OBJS = $(SRCS:src/%.c=$(OBJDIR)/%.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
-	@echo "$(GREEN)Creating philosopher...$(NC)"
-	@$(CC) $(CFLAGS) $(INCLUDE) $(OBJS) -o $(NAME) $(INCLUDE)
-	@echo "$(CYAN) ====== DONE ! ======\n$(NC)"
+$(OBJDIR)/%.o: src/%.c
+	@mkdir -p $(OBJDIR)
+	@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-%.o:%.c
-	@$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@ 
+$(NAME): $(OBJS)
+	@$(CC) $(CFLAGS) $(INCLUDE) -o $(NAME) $(OBJS)
+
+clean:
+	@$(RM) $(OBJS) $(OBJDIR)
+
+fclean: clean
+	@$(RM) $(NAME)
 
 re: fclean all
 
-clean:
-	@echo "\n$(RED)Cleaning project Philo...$(NC)"
-	@rm -rf $(OBJS)
-
-fclean: clean
-	@echo "$(YELLOW)Deleted philo file...$(NC)"
-	@rm -rf $(NAME)
-	@echo "$(CYAN) ====== DONE ! ======\n$(NC)"
-
-	
-.PHONY: all re clean fclean
+.PHONY: all clean fclean re

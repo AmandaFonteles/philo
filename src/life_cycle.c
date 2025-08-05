@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 20:01:33 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/04 18:46:50 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/05 11:18:46 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	*life_cycle(void *ph)
 
 int	start_sim(t_table *table)
 {
-	table->start_time = get_time() + 100;
+	table->start_time = get_time() + (table->nb_philo * 2) + 100;
 	if ((long long)table->start_time == -1)
 	{
 		printf("Error getting start time\n");

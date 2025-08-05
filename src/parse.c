@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/03 20:00:07 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/04 16:21:07 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/05 15:14:04 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	parsing(int ac, char **av, t_table *table)
 	while (i < ac)
 	{
 		if (!is_valid(av[i]))
-			return (printf("Error: Invalid numeric argument: %s\n", av[i]), 1);
+			return (printf("Error: Invalid arguments.\n"), 1);
 		i++;
 	}
 	table->nb_philo = ft_atol(av[1]);

@@ -6,7 +6,7 @@
 /*   By: afontele <afontele@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/04 01:56:02 by afontele          #+#    #+#             */
-/*   Updated: 2025/08/05 14:46:23 by afontele         ###   ########.fr       */
+/*   Updated: 2025/08/07 11:20:36 by afontele         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,6 @@ int	eat_philo(t_philo *philo)
 {
 	if (end_sim(philo->table))
 		return (1);
-	if (philo->table->must_eat != -1)
-	{
-		pthread_mutex_lock(&philo->m_count_meal);
-		if (philo->count_meal >= (size_t)philo->table->must_eat)
-		{
-			pthread_mutex_unlock(&philo->m_count_meal);
-			return (1);
-		}
-		pthread_mutex_unlock(&philo->m_count_meal);
-	}
 	take_forks(philo);
 	pthread_mutex_lock(&philo->m_last_meal);
 	philo->last_meal = get_time();
